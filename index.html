@@ -1,0 +1,2077 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Escala de Coroinhas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            /* Shadcn UI - Light Theme */
+            --background: 0 0% 100%;
+            --foreground: 240 10% 3.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 240 10% 3.9%;
+            --primary: 240 5.9% 10%;
+            --primary-foreground: 0 0% 98%;
+            --secondary: 240 4.8% 95.9%;
+            --secondary-foreground: 240 5.9% 10%;
+            --muted: 240 4.8% 95.9%;
+            --muted-foreground: 240 3.8% 46.1%;
+            --accent: 240 4.8% 95.9%;
+            --accent-foreground: 240 5.9% 10%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 5.9% 90%;
+            --input: 240 5.9% 90%;
+            --ring: 240 5.9% 10%;
+            --radius: 0.5rem;
+        }
+
+        .dark {
+            /* Shadcn UI - Dark Theme */
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --primary: 0 0% 98%;
+            --primary-foreground: 240 5.9% 10%;
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 3.7% 15.9%;
+            --input: 240 3.7% 15.9%;
+            --ring: 240 4.9% 83.9%;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+            transition:
+                background-color 0.3s ease,
+                color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Top Bar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        /* Typography */
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+        }
+
+        h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.025em;
+        }
+
+        p {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: hsl(var(--foreground));
+        }
+
+        /* Layout Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* Cards */
+        .card {
+            background-color: hsl(var(--card));
+            color: hsl(var(--card-foreground));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .sub-card {
+            background-color: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1.25rem;
+        }
+
+        /* Inputs & Selects */
+        .input-field {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: transparent;
+            border: 1px solid hsl(var(--input));
+            border-radius: calc(var(--radius) - 2px);
+            color: hsl(var(--foreground));
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: transparent;
+            box-shadow:
+                0 0 0 2px hsl(var(--background)),
+                0 0 0 4px hsl(var(--ring));
+        }
+
+        /* Checkboxes */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 400;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
+            accent-color: hsl(var(--primary));
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            height: 2.5rem;
+            padding: 0 1rem;
+            border-radius: calc(var(--radius) - 2px);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .btn:focus-visible {
+            outline: none;
+            box-shadow:
+                0 0 0 2px hsl(var(--background)),
+                0 0 0 4px hsl(var(--ring));
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+
+        .btn-secondary {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+
+        .btn-secondary:hover {
+            background-color: hsl(var(--secondary) / 0.8);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid hsl(var(--input));
+            color: hsl(var(--foreground));
+        }
+
+        .btn-outline:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        .btn-destructive {
+            background-color: transparent;
+            color: hsl(var(--destructive));
+            border: 1px solid hsl(var(--border));
+        }
+
+        .btn-destructive:hover {
+            background-color: hsl(var(--destructive) / 0.1);
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: hsl(var(--foreground));
+        }
+
+        .btn-ghost:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        .btn-icon {
+            padding: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-sm-icon {
+            padding: 0;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 4px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Rules List */
+        .list-container {
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
+            background: hsl(var(--background));
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+            font-size: 0.875rem;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 1rem;
+            padding: 0.125rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        /* Tags (Functions) */
+        .tags-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid hsl(var(--border));
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            color: hsl(var(--muted-foreground));
+            display: flex;
+            align-items: center;
+        }
+
+        .tag button:hover {
+            color: hsl(var(--destructive));
+        }
+
+        /* Tables */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        th,
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        th {
+            background-color: hsl(var(--muted));
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: hsl(var(--muted) / 0.5);
+        }
+
+        td select {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        td select:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        td select:focus {
+            outline: none;
+            border-color: hsl(var(--ring));
+            background-color: hsl(var(--background));
+        }
+
+        .error-cell {
+            background-color: hsl(var(--destructive) / 0.1) !important;
+            color: hsl(var(--destructive));
+        }
+
+        .warning-cell {
+            background-color: hsl(48 96% 89% / 0.3) !important;
+            color: hsl(38 92% 38%);
+        }
+
+        .dark .warning-cell {
+            background-color: hsl(48 96% 89% / 0.1) !important;
+            color: hsl(48 96% 65%);
+        }
+
+        /* Validation Report Alerts */
+        .alert {
+            padding: 1rem;
+            border-radius: calc(var(--radius) - 2px);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            gap: 0.75rem;
+            border: 1px solid transparent;
+            align-items: flex-start;
+        }
+
+        .alert-destructive {
+            background-color: hsl(var(--destructive) / 0.1);
+            color: hsl(var(--destructive));
+            border-color: hsl(var(--destructive) / 0.2);
+        }
+
+        .alert-success {
+            background-color: hsl(142.1 76.2% 36.3% / 0.1);
+            color: hsl(142.1 76.2% 36.3%);
+            border-color: hsl(142.1 76.2% 36.3% / 0.2);
+        }
+
+        .alert-warning {
+            background-color: hsl(48 96% 89% / 0.2);
+            color: hsl(38 92% 38%);
+            border-color: hsl(48 96% 89% / 0.5);
+        }
+
+        .dark .alert-warning {
+            background-color: hsl(48 96% 89% / 0.05);
+            color: hsl(48 96% 65%);
+            border-color: hsl(48 96% 89% / 0.1);
+        }
+
+        .alert ul {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .btn-close-alert {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: inherit;
+            padding: 4px;
+            border-radius: 4px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close-alert:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .btn-close-alert:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .text-muted {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* Sections Toggling */
+        #toolsArea,
+        #outputArea {
+            display: none;
+        }
+    </style>
+</head>
+
+<body onload="inicializarTudo()">
+    <div class="container">
+        <header class="header">
+            <h1>Gerador de Escala de Coroinhas</h1>
+            <button class="btn btn-outline btn-icon" onclick="toggleTheme()" title="Alternar Tema" id="themeToggleBtn">
+                <i data-lucide="sun" id="themeIcon"></i>
+            </button>
+        </header>
+
+        <div class="card">
+            <div class="flex-between mb-2">
+                <h2 style="margin: 0">0. Configurações da Paróquia</h2>
+            </div>
+            <p>Configure regras dinâmicas para a geração automática da escala.</p>
+
+            <div class="grid-2 mt-4">
+                <div class="sub-card">
+                    <div class="flex-between mb-2">
+                        <h3>
+                            <i data-lucide="calendar" style="
+                    width: 18px;
+                    height: 18px;
+                    margin-right: 4px;
+                    vertical-align: text-bottom;
+                  "></i>
+                            Celebrações Fixas
+                        </h3>
+                    </div>
+
+                    <div class="list-container" id="listaRegras"></div>
+
+                    <div style="
+                border-top: 1px dashed hsl(var(--border));
+                padding-top: 1rem;
+              ">
+                        <label>Nova Regra de Missa</label>
+                        <select id="regraTipo" class="input-field mb-2" onchange="mudarFormRegra()">
+                            <option value="semanal">Semanal (Todo dia X)</option>
+                            <option value="nth_semana">
+                                Semana Específica (ex: 1ª Sexta)
+                            </option>
+                            <option value="dia_mes">Dia Fixo do Mês (ex: Dia 13)</option>
+                        </select>
+
+                        <div class="flex-row mb-2">
+                            <div id="blocoDiaSemana" style="flex: 1">
+                                <select id="regraDiaSemana" class="input-field">
+                                    <option value="0">Domingo</option>
+                                    <option value="1">Segunda</option>
+                                    <option value="2">Terça</option>
+                                    <option value="3">Quarta</option>
+                                    <option value="4">Quinta</option>
+                                    <option value="5">Sexta</option>
+                                    <option value="6">Sábado</option>
+                                </select>
+                            </div>
+                            <div id="blocoNthSemana" class="hidden" style="flex: 1">
+                                <select id="regraNth" class="input-field">
+                                    <option value="1">1ª</option>
+                                    <option value="2">2ª</option>
+                                    <option value="3">3ª</option>
+                                    <option value="4">4ª</option>
+                                </select>
+                            </div>
+                            <div id="blocoDiaFixo" class="hidden" style="flex: 1">
+                                <input type="number" id="regraDiaFixo" class="input-field" min="1" max="31" value="13"
+                                    placeholder="Dia" />
+                            </div>
+                            <div style="width: 110px">
+                                <input type="time" id="regraHora" class="input-field" value="19:00" />
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <input type="text" id="regraCsvId" class="input-field"
+                                placeholder="Identificador no CSV (Ex: Domingo 17 hrs)"
+                                title="Escreva exatamente como aparece na planilha do Forms" />
+                            <p class="text-muted" style="font-size: 0.75rem; margin-top: 4px">
+                                Deixe em branco para ignorar a checagem exata (útil para Dia
+                                Fixo).
+                            </p>
+                        </div>
+
+                        <button class="btn btn-secondary w-full" style="width: 100%" onclick="adicionarRegra()">
+                            <i data-lucide="plus" style="width: 16px; height: 16px"></i>
+                            Adicionar Missa
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sub-card" style="display: flex; flex-direction: column">
+                    <h3>
+                        <i data-lucide="users" style="
+                  width: 18px;
+                  height: 18px;
+                  margin-right: 4px;
+                  vertical-align: text-bottom;
+                "></i>
+                        Funções (Colunas)
+                    </h3>
+
+                    <div class="tags-area" id="listaFuncoes"></div>
+
+                    <div style="
+                border-top: 1px dashed hsl(var(--border));
+                padding-top: 1rem;
+              ">
+                        <label>Adicionar Nova Coluna</label>
+                        <div class="flex-row mb-2">
+                            <input type="text" id="novaFuncaoInput" class="input-field" style="flex: 1"
+                                placeholder="Ex: Navetista" />
+                            <button class="btn btn-secondary" onclick="adicionarFuncao()">
+                                <i data-lucide="plus" style="width: 16px; height: 16px"></i>
+                                Add
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 1.5rem">
+                            <label>Função Base Padrão (Fallback)</label>
+                            <input type="text" id="funcaoPadraoInput" class="input-field" value="Coroinha"
+                                onchange="salvarConfiguracoes()" />
+                            <p class="text-muted" style="font-size: 0.75rem; margin-top: 4px">
+                                Usada caso o sistema não encontre a função exata ou parcial.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-card" style="grid-column: 1 / -1">
+                    <h3>
+                        <i data-lucide="shield-alert" style="
+                  width: 18px;
+                  height: 18px;
+                  margin-right: 4px;
+                  vertical-align: text-bottom;
+                "></i>
+                        Restrições e Limites de Escala
+                    </h3>
+                    <p class="text-muted mb-2">
+                        Configure o que o sistema permite ou bloqueia automaticamente.
+                    </p>
+
+                    <div style="
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-top: 1rem;
+              ">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="chkMultipleWeekend" onchange="salvarConfiguracoes()" />
+                            <span>Permitir que o mesmo coroinha sirva
+                                <b>mais de uma vez no mesmo final de semana</b></span>
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="chkMultipleDay" onchange="salvarConfiguracoes()" />
+                            <span>Permitir que o mesmo coroinha sirva
+                                <b>mais de uma vez no mesmo dia</b></span>
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="chkBlockSimultaneous" checked onchange="salvarConfiguracoes()" />
+                            <span><b>Bloquear</b> a adição de celebrações diferentes no
+                                <b>mesmo dia e horário</b></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4" style="
+            background: hsl(var(--muted) / 0.5);
+            padding: 1rem;
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid hsl(var(--border));
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+          ">
+                <span style="font-size: 0.875rem; font-weight: 500"><i data-lucide="settings" style="
+                width: 16px;
+                height: 16px;
+                vertical-align: text-bottom;
+                margin-right: 4px;
+              "></i>
+                    Sistema:</span>
+                <button class="btn btn-outline" style="height: 2rem; font-size: 0.75rem"
+                    onclick="exportarConfiguracoes()">
+                    <i data-lucide="download" style="width: 14px; height: 14px"></i>
+                    Exportar Config
+                </button>
+                <button class="btn btn-outline" style="height: 2rem; font-size: 0.75rem"
+                    onclick="document.getElementById('importConfigInput').click()">
+                    <i data-lucide="upload" style="width: 14px; height: 14px"></i>
+                    Importar Config
+                </button>
+                <button class="btn btn-ghost" style="
+              height: 2rem;
+              font-size: 0.75rem;
+              color: hsl(var(--destructive));
+              margin-left: auto;
+            " onclick="resetarConfiguracoes()">
+                    <i data-lucide="rotate-ccw" style="width: 14px; height: 14px"></i>
+                    Restaurar Padrões
+                </button>
+                <input type="file" id="importConfigInput" accept=".json" class="hidden"
+                    onchange="importarConfiguracoes(event)" />
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex-between">
+                <h2 style="margin-bottom: 0">1. Importar Respostas (CSV)</h2>
+                <button class="btn btn-outline" style="height: 2rem; font-size: 0.75rem" onclick="baixarExemploCSV()">
+                    <i data-lucide="file-down" style="width: 14px; height: 14px"></i>
+                    Baixar CSV de Exemplo
+                </button>
+            </div>
+
+            <div class="grid-3 mt-4">
+                <div class="form-group">
+                    <label>Arquivo CSV do Forms</label>
+                    <input type="file" id="csvFileInput" class="input-field" accept=".csv"
+                        style="padding-top: 0.35rem" />
+                </div>
+                <div class="form-group">
+                    <label>Mês Alvo</label>
+                    <select id="mesSelect" class="input-field">
+                        <option value="1">Janeiro</option>
+                        <option value="2">Fevereiro</option>
+                        <option value="3">Março</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Maio</option>
+                        <option value="6">Junho</option>
+                        <option value="7">Julho</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ano</label>
+                    <input type="number" id="anoInput" class="input-field" value="2026" />
+                </div>
+            </div>
+            <button id="btnGerar" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem"
+                onclick="processarCSV()">
+                <i data-lucide="zap"></i> Gerar Escala Automática
+            </button>
+        </div>
+
+        <div class="card" id="toolsArea">
+            <h2>2. Ajustes Manuais Pós-Geração</h2>
+
+            <div class="grid-2">
+                <div class="sub-card">
+                    <label style="color: hsl(var(--foreground))"><i data-lucide="calendar-plus" style="
+                  width: 16px;
+                  height: 16px;
+                  vertical-align: text-bottom;
+                  margin-right: 4px;
+                "></i>
+                        Inserir Missa Extra</label>
+                    <div class="grid-2 mt-4">
+                        <input type="date" id="novaMissaData" class="input-field" />
+                        <input type="time" id="novaMissaHora" class="input-field" value="19:00" />
+                    </div>
+                    <input type="text" id="novaMissaCsvId" class="input-field mt-4"
+                        placeholder="Identificador de Dia (Opcional)" />
+                    <button class="btn btn-secondary w-full mt-4" style="width: 100%" onclick="adicionarMissaExtra()">
+                        Adicionar à Tabela
+                    </button>
+                </div>
+
+                <div class="sub-card">
+                    <label style="color: hsl(var(--foreground))"><i data-lucide="user-cog" style="
+                  width: 16px;
+                  height: 16px;
+                  vertical-align: text-bottom;
+                  margin-right: 4px;
+                "></i>
+                        Editar Perfil do Coroinha</label>
+                    <select id="editCoroinhaSelect" class="input-field mt-4" onchange="carregarDadosCoroinha()">
+                        <option value="">Selecione um coroinha...</option>
+                    </select>
+                    <input type="text" id="editDiasDisponiveis" class="input-field mt-4"
+                        placeholder="Dias (ex: Domingo 17 hrs, Sextas)" />
+                    <input type="text" id="editDiasIndisponiveis" class="input-field mt-4"
+                        placeholder="Dias que não pode (ex: 15, 20)" />
+                    <input type="text" id="editFuncoes" class="input-field mt-4"
+                        placeholder="Funções (ex: Coroinha, Navetista)" />
+                    <button class="btn btn-outline w-full mt-4" style="width: 100%" onclick="salvarEdicaoCoroinha()">
+                        Atualizar Coroinha
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="outputArea">
+            <div class="flex-between mb-2">
+                <h2 style="margin-bottom: 0">3. Tabela de Escala</h2>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+                    <button class="btn btn-outline" onclick="validarEscala()">
+                        <i data-lucide="check-square"></i> Validar
+                    </button>
+                    <button id="btnDownload" class="btn btn-primary" onclick="baixarCSV()">
+                        <i data-lucide="file-spreadsheet"></i> Baixar CSV
+                    </button>
+                </div>
+            </div>
+
+            <div id="validationReport" style="
+            display: none;
+            margin-top: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
+          "></div>
+
+            <div class="table-wrapper mt-4">
+                <table id="tabelaEscala">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="flex-between mt-4" style="margin-top: 3rem; margin-bottom: 1rem">
+                <h3 style="margin-bottom: 0">Resumo Mensal de Serviços</h3>
+                <button class="btn btn-secondary" onclick="renderizarResumo()">
+                    <i data-lucide="refresh-cw"></i> Atualizar Resumo
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="tabelaResumo">
+                    <thead>
+                        <tr>
+                            <th>Nome do Coroinha</th>
+                            <th style="text-align: center; width: 150px">
+                                Total de Missas
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- TEMA (DARK/LIGHT MODE) ---
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle("dark");
+            const isDark = body.classList.contains("dark");
+            localStorage.setItem("coroinhasTheme", isDark ? "dark" : "light");
+
+            const icon = document.getElementById("themeIcon");
+            icon.setAttribute("data-lucide", isDark ? "moon" : "sun");
+            lucide.createIcons();
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem("coroinhasTheme");
+            const prefersDark = window.matchMedia(
+                "(prefers-color-scheme: dark)",
+            ).matches;
+            if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+                document.body.classList.add("dark");
+                document
+                    .getElementById("themeIcon")
+                    .setAttribute("data-lucide", "moon");
+            } else {
+                document
+                    .getElementById("themeIcon")
+                    .setAttribute("data-lucide", "sun");
+            }
+        }
+
+        // --- ESTADOS GLOBAIS ---
+        let coroinhasGlobal = {};
+        let missasGlobal = [];
+        let escalaGlobal = [];
+        let tituloGlobal = "";
+
+        const REGRAS_PADRAO = [
+            {
+                tipo: "semanal",
+                diaSemana: 0,
+                horario: "07:00",
+                csvId: "Domingo 07 hrs",
+            },
+            {
+                tipo: "semanal",
+                diaSemana: 0,
+                horario: "17:00",
+                csvId: "Domingo 17 hrs",
+            },
+            {
+                tipo: "semanal",
+                diaSemana: 0,
+                horario: "19:00",
+                csvId: "Domingo 19 hrs",
+            },
+            {tipo: "semanal", diaSemana: 1, horario: "19:00", csvId: "Segundas"},
+            {tipo: "semanal", diaSemana: 2, horario: "19:00", csvId: "Terças"},
+            {tipo: "semanal", diaSemana: 6, horario: "18:00", csvId: "Sábados"},
+            {
+                tipo: "nth_semana",
+                diaSemana: 5,
+                nth: 1,
+                horario: "19:00",
+                csvId: "Sextas",
+            },
+            {
+                tipo: "nth_semana",
+                diaSemana: 5,
+                nth: 3,
+                horario: "19:00",
+                csvId: "Sextas",
+            },
+            {tipo: "dia_mes", diaFixo: 13, horario: "19:00", csvId: ""},
+            {tipo: "dia_mes", diaFixo: 19, horario: "19:00", csvId: ""},
+        ];
+        const FUNCOES_PADRAO = [
+            "Luciferário/Líder",
+            "Luciferário",
+            "Librifero",
+            "Cruciferário",
+        ];
+        const FUNCAO_BASE_PADRAO = "Coroinha";
+
+        let regrasGlobal = [];
+        let funcoesGlobal = [];
+        const nomesDiasDisplay = [
+            "Domingo",
+            "Segunda",
+            "Terça",
+            "Quarta",
+            "Quinta",
+            "Sexta",
+            "Sábado",
+        ];
+
+        // --- INICIALIZAÇÃO ---
+        function inicializarTudo() {
+            initTheme();
+            lucide.createIcons();
+            carregarConfiguracoes();
+            document.getElementById("mesSelect").value = new Date().getMonth() + 1;
+        }
+
+        function salvarConfiguracoes() {
+            const config = {
+                regras: regrasGlobal,
+                funcoes: funcoesGlobal,
+                funcaoPadrao: document
+                    .getElementById("funcaoPadraoInput")
+                    .value.trim(),
+                chkMultipleWeekend:
+                    document.getElementById("chkMultipleWeekend").checked,
+                chkMultipleDay: document.getElementById("chkMultipleDay").checked,
+                chkBlockSimultaneous: document.getElementById("chkBlockSimultaneous")
+                    .checked,
+            };
+            localStorage.setItem("coroinhasConfigV2", JSON.stringify(config));
+        }
+
+        function carregarConfiguracoes() {
+            let saved =
+                localStorage.getItem("coroinhasConfigV2") ||
+                localStorage.getItem("coroinhasConfigV1");
+            if (saved) {
+                try {
+                    const config = JSON.parse(saved);
+                    regrasGlobal =
+                        config.regras || JSON.parse(JSON.stringify(REGRAS_PADRAO));
+                    funcoesGlobal = config.funcoes || [...FUNCOES_PADRAO];
+                    document.getElementById("funcaoPadraoInput").value =
+                        config.funcaoPadrao || FUNCAO_BASE_PADRAO;
+
+                    document.getElementById("chkMultipleWeekend").checked =
+                        config.chkMultipleWeekend || false;
+                    document.getElementById("chkMultipleDay").checked =
+                        config.chkMultipleDay || false;
+                    document.getElementById("chkBlockSimultaneous").checked =
+                        config.chkBlockSimultaneous !== false;
+                } catch (e) {
+                    resetarConfiguracoes(false);
+                }
+            } else {
+                resetarConfiguracoes(false);
+            }
+            renderizarRegras();
+            renderizarFuncoes();
+        }
+
+        function resetarConfiguracoes(mostrarAlerta = true) {
+            if (
+                mostrarAlerta &&
+                !confirm(
+                    "Atenção: Isso apagará suas configurações atuais e voltará ao padrão de fábrica. Tem certeza?",
+                )
+            )
+                return;
+            regrasGlobal = JSON.parse(JSON.stringify(REGRAS_PADRAO));
+            funcoesGlobal = [...FUNCOES_PADRAO];
+            document.getElementById("funcaoPadraoInput").value = FUNCAO_BASE_PADRAO;
+            document.getElementById("chkMultipleWeekend").checked = false;
+            document.getElementById("chkMultipleDay").checked = false;
+            document.getElementById("chkBlockSimultaneous").checked = true;
+            salvarConfiguracoes();
+            renderizarRegras();
+            renderizarFuncoes();
+            if (mostrarAlerta) alert("Configurações restauradas com sucesso.");
+        }
+
+        function exportarConfiguracoes() {
+            salvarConfiguracoes();
+            const saved = localStorage.getItem("coroinhasConfigV2");
+            const blob = new Blob([saved], {type: "application/json"});
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "config_escala_coroinhas.json";
+            link.click();
+        }
+
+        function importarConfiguracoes(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    if (config.regras && config.funcoes) {
+                        regrasGlobal = config.regras;
+                        funcoesGlobal = config.funcoes;
+                        document.getElementById("funcaoPadraoInput").value =
+                            config.funcaoPadrao || FUNCAO_BASE_PADRAO;
+                        document.getElementById("chkMultipleWeekend").checked =
+                            config.chkMultipleWeekend || false;
+                        document.getElementById("chkMultipleDay").checked =
+                            config.chkMultipleDay || false;
+                        document.getElementById("chkBlockSimultaneous").checked =
+                            config.chkBlockSimultaneous !== false;
+
+                        salvarConfiguracoes();
+                        renderizarRegras();
+                        renderizarFuncoes();
+                        alert("Configurações importadas com sucesso!");
+                    } else {
+                        alert("Arquivo de configuração inválido.");
+                    }
+                } catch (err) {
+                    alert("Erro ao ler o arquivo JSON.");
+                }
+                event.target.value = "";
+            };
+            reader.readAsText(file);
+        }
+
+        // --- GESTÃO DE FUNÇÕES E REGRAS ---
+        function renderizarFuncoes() {
+            const div = document.getElementById("listaFuncoes");
+            div.innerHTML = "";
+            if (funcoesGlobal.length === 0) {
+                div.innerHTML =
+                    '<span class="text-muted">Nenhuma função definida.</span>';
+                return;
+            }
+            funcoesGlobal.forEach((f, i) => {
+                div.innerHTML += `<div class="tag">${f} <button onclick="removerFuncao(${i})"><i data-lucide="x" style="width:14px;height:14px;"></i></button></div>`;
+            });
+            lucide.createIcons();
+        }
+
+        function adicionarFuncao() {
+            const val = document.getElementById("novaFuncaoInput").value.trim();
+            if (val) {
+                funcoesGlobal.push(val);
+                document.getElementById("novaFuncaoInput").value = "";
+                salvarConfiguracoes();
+                renderizarFuncoes();
+            }
+        }
+
+        function removerFuncao(index) {
+            funcoesGlobal.splice(index, 1);
+            salvarConfiguracoes();
+            renderizarFuncoes();
+        }
+
+        function mudarFormRegra() {
+            const tipo = document.getElementById("regraTipo").value;
+            document.getElementById("blocoDiaSemana").classList.add("hidden");
+            document.getElementById("blocoNthSemana").classList.add("hidden");
+            document.getElementById("blocoDiaFixo").classList.add("hidden");
+
+            if (tipo === "semanal")
+                document.getElementById("blocoDiaSemana").classList.remove("hidden");
+            else if (tipo === "nth_semana") {
+                document.getElementById("blocoDiaSemana").classList.remove("hidden");
+                document.getElementById("blocoNthSemana").classList.remove("hidden");
+            } else if (tipo === "dia_mes")
+                document.getElementById("blocoDiaFixo").classList.remove("hidden");
+        }
+
+        function adicionarRegra() {
+            const tipo = document.getElementById("regraTipo").value;
+            let novaRegra = {
+                tipo: tipo,
+                horario: document.getElementById("regraHora").value,
+                csvId: document.getElementById("regraCsvId").value.trim(),
+            };
+
+            if (tipo === "semanal")
+                novaRegra.diaSemana = parseInt(
+                    document.getElementById("regraDiaSemana").value,
+                );
+            else if (tipo === "nth_semana") {
+                novaRegra.diaSemana = parseInt(
+                    document.getElementById("regraDiaSemana").value,
+                );
+                novaRegra.nth = parseInt(document.getElementById("regraNth").value);
+            } else if (tipo === "dia_mes")
+                novaRegra.diaFixo = parseInt(
+                    document.getElementById("regraDiaFixo").value,
+                );
+
+            let blockSimul = document.getElementById(
+                "chkBlockSimultaneous",
+            ).checked;
+            if (blockSimul) {
+                let conflito = regrasGlobal.find(
+                    (r) =>
+                        r.tipo === novaRegra.tipo &&
+                        r.horario === novaRegra.horario &&
+                        r.diaSemana === novaRegra.diaSemana &&
+                        r.diaFixo === novaRegra.diaFixo &&
+                        r.nth === novaRegra.nth,
+                );
+                if (conflito)
+                    return alert(
+                        "RESTRIÇÃO ATIVA: Já existe uma regra idêntica de missa para este dia e horário.",
+                    );
+            }
+
+            regrasGlobal.push(novaRegra);
+            document.getElementById("regraCsvId").value = "";
+            salvarConfiguracoes();
+            renderizarRegras();
+        }
+
+        function removerRegra(index) {
+            regrasGlobal.splice(index, 1);
+            salvarConfiguracoes();
+            renderizarRegras();
+        }
+
+        function getDescricaoRegra(regra) {
+            let desc = "";
+            if (regra.tipo === "semanal")
+                desc = `Todo(a) <b>${nomesDiasDisplay[regra.diaSemana]}</b> às <b>${regra.horario}</b>`;
+            if (regra.tipo === "nth_semana")
+                desc = `A <b>${regra.nth}ª ${nomesDiasDisplay[regra.diaSemana]}</b> do mês às <b>${regra.horario}</b>`;
+            if (regra.tipo === "dia_mes")
+                desc = `Todo dia <b>${regra.diaFixo}</b> às <b>${regra.horario}</b>`;
+
+            let badge = regra.csvId
+                ? `<span class="badge" style="background: hsl(var(--primary)/0.1); color: hsl(var(--primary));">${regra.csvId}</span>`
+                : `<span class="badge" style="background: hsl(var(--muted)); color: hsl(var(--muted-foreground));">Livre</span>`;
+            return desc + badge;
+        }
+
+        function renderizarRegras() {
+            const div = document.getElementById("listaRegras");
+            div.innerHTML = "";
+            if (regrasGlobal.length === 0) {
+                div.innerHTML =
+                    '<div class="text-muted" style="padding:1rem;">Nenhuma regra configurada.</div>';
+                return;
+            }
+            regrasGlobal.forEach((regra, index) => {
+                div.innerHTML += `<div class="list-item"><span class="regra-desc">${getDescricaoRegra(regra)}</span><button class="btn btn-ghost btn-sm-icon" style="color:hsl(var(--destructive));" onclick="removerRegra(${index})"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button></div>`;
+            });
+            lucide.createIcons();
+        }
+
+        // --- LÓGICA DE CALENDÁRIO ---
+        function getDatasMissas(ano, mes) {
+            const dates = [];
+            let date = new Date(ano, mes - 1, 1);
+            while (date.getMonth() === mes - 1) {
+                dates.push(new Date(date));
+                date.setDate(date.getDate() + 1);
+            }
+
+            let blockSimul = document.getElementById(
+                "chkBlockSimultaneous",
+            ).checked;
+            const missas = [];
+            const missoesCadastradas = new Set();
+
+            dates.forEach((data) => {
+                const diaSemana = data.getDay();
+                const dia = data.getDate();
+                const nthSemana = Math.ceil(dia / 7);
+                regrasGlobal.forEach((regra) => {
+                    let seAplica = false;
+                    if (regra.tipo === "semanal" && diaSemana === regra.diaSemana)
+                        seAplica = true;
+                    else if (
+                        regra.tipo === "nth_semana" &&
+                        diaSemana === regra.diaSemana &&
+                        nthSemana === regra.nth
+                    )
+                        seAplica = true;
+                    else if (regra.tipo === "dia_mes" && dia === regra.diaFixo)
+                        seAplica = true;
+
+                    if (seAplica) {
+                        const chaveUnica = blockSimul
+                            ? `${dia}-${regra.horario}`
+                            : `${dia}-${regra.horario}-${Math.random()}`;
+                        if (!missoesCadastradas.has(chaveUnica)) {
+                            missoesCadastradas.add(chaveUnica);
+                            missas.push({
+                                data: new Date(data),
+                                horario: regra.horario,
+                                csvId: regra.csvId,
+                                nomeDia: nomesDiasDisplay[diaSemana],
+                            });
+                        }
+                    }
+                });
+            });
+            missas.sort((a, b) => {
+                if (a.data.getTime() === b.data.getTime())
+                    return a.horario.localeCompare(b.horario);
+                return a.data - b.data;
+            });
+            return missas;
+        }
+
+        function getWeekendId(data) {
+            const d = new Date(data);
+            if (d.getDay() === 0) d.setDate(d.getDate() - 1);
+            return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        }
+
+        // --- GERADOR DE CSV DE EXEMPLO ---
+        function baixarExemploCSV() {
+            const diasDisponiveis = [
+                ...new Set(regrasGlobal.map((r) => r.csvId).filter((id) => id)),
+            ];
+            if (diasDisponiveis.length === 0)
+                diasDisponiveis.push("Domingo 07 hrs", "Domingo 17 hrs", "Sextas");
+
+            const funcaoPadrao =
+                document.getElementById("funcaoPadraoInput").value.trim() ||
+                "Coroinha";
+            const nomesFalsos = [
+                "João Paulo",
+                "Maria Cecília",
+                "Pedro Henrique",
+                "Ana Luiza",
+                "Lucas Gabriel",
+                "Julia Mendes",
+                "Marcos Antônio",
+                "Fernanda Costa",
+                "Gabriel Oliveira",
+                "Beatriz Souza",
+                "Enzo Almeida",
+                "Alice Martins",
+            ];
+
+            let csvContent =
+                "\uFEFFNome,Dias da Semana,Dias que não pode,Funções\n";
+
+            nomesFalsos.forEach((nome) => {
+                let qtdDias = Math.floor(Math.random() * 3) + 2;
+                let diasEscolhidos = [...diasDisponiveis]
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, qtdDias);
+
+                let diasNaoPode = [];
+                if (Math.random() > 0.3) {
+                    let qtdNaoPode = Math.floor(Math.random() * 3) + 1;
+                    for (let i = 0; i < qtdNaoPode; i++)
+                        diasNaoPode.push(Math.floor(Math.random() * 28) + 1);
+                    diasNaoPode = [...new Set(diasNaoPode)];
+                }
+
+                let funcoesEscolhidas = [];
+                if (Math.random() > 0.1) funcoesEscolhidas.push(funcaoPadrao);
+                if (funcoesGlobal.length > 0) {
+                    let qtdOutras = Math.floor(Math.random() * 2) + 1;
+                    let outrasFuncoes = [...funcoesGlobal]
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, qtdOutras);
+                    funcoesEscolhidas = [
+                        ...new Set([...funcoesEscolhidas, ...outrasFuncoes]),
+                    ];
+                }
+
+                let linha = [
+                    `"${nome}"`,
+                    `"${diasEscolhidos.join(", ")}"`,
+                    `"${diasNaoPode.join(", ")}"`,
+                    `"${funcoesEscolhidas.join(", ")}"`,
+                ];
+                csvContent += linha.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], {
+                type: "text/csv;charset=utf-8;",
+            });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "exemplo_respostas_coroinhas.csv";
+            link.click();
+        }
+
+        // --- PARSING E VALIDAÇÃO ---
+        function parseCSVLine(text) {
+            let result = [],
+                curVal = "",
+                inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (inQuotes) {
+                    if (char === '"') {
+                        if (i + 1 < text.length && text[i + 1] === '"') {
+                            curVal += '"';
+                            i++;
+                        } else {
+                            inQuotes = false;
+                        }
+                    } else {
+                        curVal += char;
+                    }
+                } else {
+                    if (char === '"') {
+                        inQuotes = true;
+                    } else if (char === ",") {
+                        result.push(curVal.trim());
+                        curVal = "";
+                    } else {
+                        curVal += char;
+                    }
+                }
+            }
+            result.push(curVal.trim());
+            return result;
+        }
+
+        function parseDiasSemana(diasStr) {
+            const dias = {};
+            if (!diasStr) return dias;
+            diasStr.split(",").forEach((dia) => {
+                if (dia.trim()) dias[dia.trim()] = true;
+            });
+            return dias;
+        }
+        function unparseDiasSemana(diasObj) {
+            return Object.keys(diasObj)
+                .filter((k) => diasObj[k])
+                .join(", ");
+        }
+        function parseDiasIndisponiveis(diasStr) {
+            if (!diasStr) return [];
+            const nums = diasStr.match(/\d+/g);
+            return nums ? nums.map(Number) : [];
+        }
+        function parseFuncoes(funcoesStr) {
+            const funcoes = {};
+            if (!funcoesStr) return funcoes;
+            funcoesStr.split(",").forEach((f) => {
+                if (f.trim()) funcoes[f.trim()] = true;
+            });
+            return funcoes;
+        }
+        function unparseFuncoes(funcoesObj) {
+            return Object.keys(funcoesObj)
+                .filter((k) => funcoesObj[k])
+                .join(", ");
+        }
+
+        function verificarDisponibilidade(info, data, csvId) {
+            if (csvId && !info.dias_disponiveis[csvId]) return false;
+            if (info.dias_indisponiveis.includes(data.getDate())) return false;
+            return true;
+        }
+
+        function testarCompatibilidadeFuncao(info, nomeColuna, funcaoPadrao) {
+            let nomeColLower = nomeColuna.toLowerCase();
+            if (info.funcoes[nomeColuna]) return {pode: true, score: 3};
+            for (let funcCsv of Object.keys(info.funcoes)) {
+                if (info.funcoes[funcCsv]) {
+                    let funcCsvLower = funcCsv.toLowerCase();
+                    if (
+                        nomeColLower.includes(funcCsvLower) ||
+                        funcCsvLower.includes(nomeColLower)
+                    )
+                        return {pode: true, score: 2};
+                }
+            }
+            if (funcaoPadrao && info.funcoes[funcaoPadrao])
+                return {pode: true, score: 1};
+            return {pode: false, score: 0};
+        }
+
+        // --- ATRIBUIÇÃO ---
+        function atribuirCoroinhas(coroinhas, missas) {
+            let escala = [],
+                contagem = {},
+                fdsTrabalhados = {},
+                diasTrabalhados = {};
+            let allowWeekend =
+                document.getElementById("chkMultipleWeekend").checked;
+            let allowDay = document.getElementById("chkMultipleDay").checked;
+            let funcaoPadrao = document
+                .getElementById("funcaoPadraoInput")
+                .value.trim();
+
+            Object.keys(coroinhas).forEach((nome) => {
+                contagem[nome] = 0;
+                fdsTrabalhados[nome] = new Set();
+                diasTrabalhados[nome] = new Set();
+            });
+
+            missas.forEach((missa) => {
+                const df = missa.data.toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                });
+                let escalaMissa = {
+                    Data: `${df} ${missa.nomeDia} - ${missa.horario}`,
+                };
+                funcoesGlobal.forEach((f, idx) => (escalaMissa["col_" + idx] = ""));
+
+                const isWeekend = [0, 6].includes(missa.data.getDay());
+                const weekendId = isWeekend ? getWeekendId(missa.data) : null;
+                const dayId = missa.data.toISOString().split("T")[0];
+
+                funcoesGlobal.forEach((funcao, idx) => {
+                    let colKey = "col_" + idx;
+                    let disponiveis = [];
+
+                    Object.entries(coroinhas).forEach(([nome, info]) => {
+                        let testeFuncao = testarCompatibilidadeFuncao(
+                            info,
+                            funcao,
+                            funcaoPadrao,
+                        );
+                        let jaNestaMissa = Object.values(escalaMissa).includes(nome);
+                        let jaTrabalhaFds =
+                            !allowWeekend &&
+                            isWeekend &&
+                            fdsTrabalhados[nome].has(weekendId);
+                        let jaTrabalhaDia = !allowDay && diasTrabalhados[nome].has(dayId);
+
+                        if (
+                            testeFuncao.pode &&
+                            verificarDisponibilidade(info, missa.data, missa.csvId) &&
+                            !jaNestaMissa &&
+                            !jaTrabalhaFds &&
+                            !jaTrabalhaDia
+                        ) {
+                            disponiveis.push({
+                                nome: nome,
+                                qtd: contagem[nome],
+                                score: testeFuncao.score,
+                            });
+                        }
+                    });
+
+                    disponiveis.sort((a, b) => {
+                        if (b.score !== a.score) return b.score - a.score;
+                        return a.qtd - b.qtd;
+                    });
+
+                    if (disponiveis.length > 0) {
+                        let escolhido = disponiveis[0].nome;
+                        escalaMissa[colKey] = escolhido;
+                        contagem[escolhido]++;
+                        if (isWeekend) fdsTrabalhados[escolhido].add(weekendId);
+                        diasTrabalhados[escolhido].add(dayId);
+                    }
+                });
+                escala.push(escalaMissa);
+            });
+            return {escala, contagem, fdsTrabalhados, diasTrabalhados};
+        }
+
+        function otimizarEscala(
+            coroinhas,
+            escala,
+            contagem,
+            missas,
+            fdsTrabalhados,
+            diasTrabalhados,
+        ) {
+            let subatribuidos = Object.keys(contagem).filter(
+                (n) => contagem[n] < 2,
+            );
+            if (subatribuidos.length === 0) return escala;
+
+            let funcaoPadrao = document
+                .getElementById("funcaoPadraoInput")
+                .value.trim();
+            let allowWeekend =
+                document.getElementById("chkMultipleWeekend").checked;
+            let allowDay = document.getElementById("chkMultipleDay").checked;
+
+            subatribuidos.forEach((nome) => {
+                let info = coroinhas[nome];
+                let necessarias = 2 - contagem[nome];
+
+                for (let i = 0; i < missas.length; i++) {
+                    if (necessarias <= 0) break;
+                    let missa = missas[i],
+                        escalaMissa = escala[i];
+                    let isWeekend = [0, 6].includes(missa.data.getDay());
+                    let weekendId = isWeekend ? getWeekendId(missa.data) : null;
+                    let dayId = missa.data.toISOString().split("T")[0];
+
+                    if (
+                        !allowWeekend &&
+                        isWeekend &&
+                        fdsTrabalhados[nome].has(weekendId)
+                    )
+                        continue;
+                    if (!allowDay && diasTrabalhados[nome].has(dayId)) continue;
+                    if (!verificarDisponibilidade(info, missa.data, missa.csvId))
+                        continue;
+                    if (Object.values(escalaMissa).includes(nome)) continue;
+
+                    for (let j = 0; j < funcoesGlobal.length; j++) {
+                        let funcao = funcoesGlobal[j];
+                        let colKey = "col_" + j;
+                        let testeFuncao = testarCompatibilidadeFuncao(
+                            info,
+                            funcao,
+                            funcaoPadrao,
+                        );
+                        if (!testeFuncao.pode) continue;
+
+                        let atual = escalaMissa[colKey];
+                        if (atual === "") {
+                            escalaMissa[colKey] = nome;
+                            contagem[nome]++;
+                            necessarias--;
+                            if (isWeekend) fdsTrabalhados[nome].add(weekendId);
+                            diasTrabalhados[nome].add(dayId);
+                            break;
+                        }
+                        if (atual && contagem[atual] > 2) {
+                            escalaMissa[colKey] = nome;
+                            contagem[nome]++;
+                            contagem[atual]--;
+                            necessarias--;
+                            if (isWeekend) {
+                                fdsTrabalhados[nome].add(weekendId);
+                                fdsTrabalhados[atual].delete(weekendId);
+                            }
+                            diasTrabalhados[nome].add(dayId);
+                            diasTrabalhados[atual].delete(dayId);
+                            break;
+                        }
+                    }
+                }
+            });
+            return escala;
+        }
+
+        // --- EXECUÇÃO ---
+        function processarCSV() {
+            const fileInput = document.getElementById("csvFileInput");
+            const mes = parseInt(document.getElementById("mesSelect").value);
+            const ano = parseInt(document.getElementById("anoInput").value);
+
+            if (!fileInput.files.length) {
+                alert("Selecione um arquivo CSV com os coroinhas.");
+                return;
+            }
+            if (regrasGlobal.length === 0) {
+                alert("Configure pelo menos uma regra de missa.");
+                return;
+            }
+            if (funcoesGlobal.length === 0) {
+                alert("Configure pelo menos uma função.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const rows = e.target.result.trim().split("\n");
+                if (rows.length < 2) return;
+
+                const headers = parseCSVLine(rows[0]).map((h) => h.toLowerCase());
+                const idxNome = headers.findIndex((h) => h.includes("nome"));
+                const idxDiasSemana = headers.findIndex(
+                    (h) => h.includes("semana") || h.includes("dias"),
+                );
+                const idxDiasNaoPode = headers.findIndex(
+                    (h) => h.includes("não pode") || h.includes("nao pode"),
+                );
+                const idxFuncoes = headers.findIndex((h) => h.includes("fun"));
+
+                coroinhasGlobal = {};
+
+                for (let i = 1; i < rows.length; i++) {
+                    if (!rows[i].trim()) continue;
+                    const cols = parseCSVLine(rows[i]);
+                    if (
+                        cols.length > Math.max(idxNome, idxDiasSemana) &&
+                        cols[idxNome]
+                    ) {
+                        coroinhasGlobal[cols[idxNome]] = {
+                            dias_disponiveis: parseDiasSemana(cols[idxDiasSemana]),
+                            dias_indisponiveis: parseDiasIndisponiveis(
+                                cols[idxDiasNaoPode],
+                            ),
+                            funcoes: parseFuncoes(cols[idxFuncoes]),
+                        };
+                    }
+                }
+
+                missasGlobal = getDatasMissas(ano, mes);
+                let result = atribuirCoroinhas(coroinhasGlobal, missasGlobal);
+                escalaGlobal = otimizarEscala(
+                    coroinhasGlobal,
+                    result.escala,
+                    result.contagem,
+                    missasGlobal,
+                    result.fdsTrabalhados,
+                    result.diasTrabalhados,
+                );
+
+                tituloGlobal = `ESCALA MENSAL DOS COROINHAS - ${document.getElementById("mesSelect").options[mes - 1].text.toUpperCase()} ${ano}`;
+
+                atualizarDropdownCoroinhas();
+                construirCabecalhoTabela();
+
+                // Limpa o estado de validação toda vez que gerar novamente
+                limparValidacaoEstado();
+                renderizarTabela();
+
+                document.getElementById("toolsArea").style.display = "block";
+                document.getElementById("outputArea").style.display = "block";
+            };
+            reader.readAsText(fileInput.files[0], "UTF-8");
+        }
+
+        // --- ATUALIZAÇÕES MANUAIS ---
+        function atualizarDropdownCoroinhas() {
+            const select = document.getElementById("editCoroinhaSelect");
+            select.innerHTML = '<option value="">Selecione um coroinha...</option>';
+            Object.keys(coroinhasGlobal)
+                .sort()
+                .forEach((nome) => {
+                    select.innerHTML += `<option value="${nome}">${nome}</option>`;
+                });
+        }
+
+        function construirCabecalhoTabela() {
+            let thead = document.querySelector("#tabelaEscala thead");
+            let html = `<tr><th style="min-width: 150px;">Data</th>`;
+            funcoesGlobal.forEach((f) => {
+                html += `<th>${f}</th>`;
+            });
+            html += `<th style="width: 50px; text-align: center;"><i data-lucide="settings-2" style="width:16px;height:16px;margin:auto;"></i></th></tr>`;
+            thead.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function renderizarTabela() {
+            const tbody = document.querySelector("#tabelaEscala tbody");
+            tbody.innerHTML = "";
+            const todosCoroinhas = Object.keys(coroinhasGlobal).sort();
+
+            escalaGlobal.forEach((linha, i) => {
+                const tr = document.createElement("tr");
+                let tdData = `<td>${linha.Data}</td>`;
+
+                let tdRoles = funcoesGlobal
+                    .map((funcao, colIndex) => {
+                        let colKey = "col_" + colIndex;
+                        let atual = linha[colKey];
+                        let options = `<option value="">-- Vazio --</option>`;
+                        todosCoroinhas.forEach((c) => {
+                            options += `<option value="${c}" ${c === atual ? "selected" : ""}>${c}</option>`;
+                        });
+                        return `<td id="cell-${i}-${colIndex}"><select onchange="atualizarCelula(${i}, '${colKey}', this.value)">${options}</select></td>`;
+                    })
+                    .join("");
+
+                let tdAcoes = `<td style="text-align: center;"><button class="btn btn-ghost btn-sm-icon" style="color:hsl(var(--destructive));" onclick="removerMissaExtra(${i})" title="Remover missa"><i data-lucide="trash" style="width:16px;height:16px;"></i></button></td>`;
+                tr.innerHTML = tdData + tdRoles + tdAcoes;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+            renderizarResumo();
+        }
+
+        function renderizarResumo() {
+            let contagem = {};
+            const todosCoroinhas = Object.keys(coroinhasGlobal).sort();
+            todosCoroinhas.forEach((c) => (contagem[c] = 0));
+
+            escalaGlobal.forEach((linha) => {
+                funcoesGlobal.forEach((f, idx) => {
+                    let nome = linha["col_" + idx];
+                    if (nome && contagem[nome] !== undefined) contagem[nome]++;
+                });
+            });
+
+            const tbody = document.querySelector("#tabelaResumo tbody");
+            tbody.innerHTML = "";
+            todosCoroinhas.forEach((nome) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${nome}</td><td style="text-align: center; font-weight: 600;">${contagem[nome]}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function atualizarCelula(indexLinha, colKey, novoNome) {
+            escalaGlobal[indexLinha][colKey] = novoNome;
+            renderizarResumo();
+        }
+
+        function removerMissaExtra(index) {
+            if (
+                confirm(
+                    `Remover da escala a missa do dia:\n${escalaGlobal[index].Data}?`,
+                )
+            ) {
+                missasGlobal.splice(index, 1);
+                escalaGlobal.splice(index, 1);
+                renderizarTabela();
+            }
+        }
+
+        function adicionarMissaExtra() {
+            let dataStr = document.getElementById("novaMissaData").value;
+            let hora = document.getElementById("novaMissaHora").value;
+            let csvId = document.getElementById("novaMissaCsvId").value.trim();
+            if (!dataStr || !hora) return alert("Preencha data e hora.");
+
+            let parts = dataStr.split("-");
+            let dataObj = new Date(parts[0], parts[1] - 1, parts[2]);
+
+            let blockSimul = document.getElementById(
+                "chkBlockSimultaneous",
+            ).checked;
+            if (blockSimul) {
+                let conflito = missasGlobal.find(
+                    (m) => m.data.getTime() === dataObj.getTime() && m.horario === hora,
+                );
+                if (conflito)
+                    return alert(
+                        "RESTRIÇÃO ATIVA: Já existe uma missa cadastrada para este mesmo dia e horário.",
+                    );
+            }
+
+            let diaSemana = dataObj.getDay();
+            let novaMissa = {
+                data: dataObj,
+                horario: hora,
+                csvId: csvId,
+                nomeDia: nomesDiasDisplay[diaSemana],
+            };
+
+            const df = dataObj.toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+            });
+            let escalaItem = {
+                Data: `${df} ${nomesDiasDisplay[diaSemana]} - ${hora} (Extra)`,
+            };
+            funcoesGlobal.forEach((f, idx) => (escalaItem["col_" + idx] = ""));
+
+            let combinados = missasGlobal.map((m, i) => ({
+                m,
+                e: escalaGlobal[i],
+            }));
+            combinados.push({m: novaMissa, e: escalaItem});
+            combinados.sort((a, b) => {
+                if (a.m.data.getTime() === b.m.data.getTime())
+                    return a.m.horario.localeCompare(b.m.horario);
+                return a.m.data - b.m.data;
+            });
+
+            missasGlobal = combinados.map((c) => c.m);
+            escalaGlobal = combinados.map((c) => c.e);
+            renderizarTabela();
+        }
+
+        function carregarDadosCoroinha() {
+            let nome = document.getElementById("editCoroinhaSelect").value;
+            if (!nome) return;
+            let info = coroinhasGlobal[nome];
+            document.getElementById("editDiasDisponiveis").value =
+                unparseDiasSemana(info.dias_disponiveis);
+            document.getElementById("editDiasIndisponiveis").value =
+                info.dias_indisponiveis.join(", ");
+            document.getElementById("editFuncoes").value = unparseFuncoes(
+                info.funcoes,
+            );
+        }
+        function salvarEdicaoCoroinha() {
+            let nome = document.getElementById("editCoroinhaSelect").value;
+            if (!nome) return alert("Selecione um coroinha.");
+            coroinhasGlobal[nome].dias_disponiveis = parseDiasSemana(
+                document.getElementById("editDiasDisponiveis").value,
+            );
+            coroinhasGlobal[nome].dias_indisponiveis = parseDiasIndisponiveis(
+                document.getElementById("editDiasIndisponiveis").value,
+            );
+            coroinhasGlobal[nome].funcoes = parseFuncoes(
+                document.getElementById("editFuncoes").value,
+            );
+            alert(`Dados atualizados!`);
+        }
+
+        // --- SISTEMA DE AVISOS E VALIDAÇÃO ---
+        function fecharAlerta(tipo) {
+            if (tipo === "sucesso") {
+                const el = document.getElementById("alert-sucesso");
+                if (el) el.remove();
+            } else if (tipo === "erro") {
+                const el = document.getElementById("alert-erro");
+                if (el) el.remove();
+                // Remove as bordas vermelhas da tabela
+                document
+                    .querySelectorAll(".error-cell")
+                    .forEach((td) => td.classList.remove("error-cell"));
+            } else if (tipo === "aviso") {
+                const el = document.getElementById("alert-aviso");
+                if (el) el.remove();
+                // Remove as bordas amarelas da tabela
+                document
+                    .querySelectorAll(".warning-cell")
+                    .forEach((td) => td.classList.remove("warning-cell"));
+            }
+
+            // Oculta a caixa principal se não sobrar nenhum alerta
+            const container = document.getElementById("validationReport");
+            if (container.children.length === 0) {
+                container.style.display = "none";
+            }
+        }
+
+        function limparValidacaoEstado() {
+            const reportDiv = document.getElementById("validationReport");
+            reportDiv.style.display = "none";
+            reportDiv.innerHTML = "";
+            document.querySelectorAll("td select").forEach((el) => {
+                el.parentElement.classList.remove("error-cell");
+                el.parentElement.classList.remove("warning-cell");
+            });
+        }
+
+        function validarEscala() {
+            // Limpa qualquer notificação ou marcação antiga antes de rodar a nova
+            limparValidacaoEstado();
+
+            let erros = [];
+            let avisos = [];
+            let fdsTracker = {};
+            let diaTracker = {};
+            let funcaoPadrao = document
+                .getElementById("funcaoPadraoInput")
+                .value.trim();
+            let allowWeekend =
+                document.getElementById("chkMultipleWeekend").checked;
+            let allowDay = document.getElementById("chkMultipleDay").checked;
+
+            Object.keys(coroinhasGlobal).forEach((c) => {
+                fdsTracker[c] = new Set();
+                diaTracker[c] = new Set();
+            });
+
+            escalaGlobal.forEach((linha, i) => {
+                let missa = missasGlobal[i];
+                let isWeekend = [0, 6].includes(missa.data.getDay());
+                let weekendId = isWeekend ? getWeekendId(missa.data) : null;
+                let dayId = missa.data.toISOString().split("T")[0];
+                let vistosNestaMissa = new Set();
+                let escaladosAqui = [];
+
+                funcoesGlobal.forEach((funcao, colIndex) => {
+                    let colKey = "col_" + colIndex;
+                    let nome = linha[colKey];
+                    let cellTd = document.getElementById(`cell-${i}-${colIndex}`);
+
+                    if (!nome) {
+                        avisos.push(
+                            `<b>${linha.Data}</b>: Vaga para <b>${funcao}</b> está vazia.`,
+                        );
+                        if (cellTd) cellTd.classList.add("warning-cell");
+                        return;
+                    }
+                    escaladosAqui.push({nome, funcao, colIndex});
+                });
+
+                escaladosAqui.forEach(({nome, funcao, colIndex}) => {
+                    let cellTd = document.getElementById(`cell-${i}-${colIndex}`);
+                    let info = coroinhasGlobal[nome];
+
+                    if (vistosNestaMissa.has(nome)) {
+                        erros.push(
+                            `<b>${linha.Data}</b>: ${nome} está em duas funções ao mesmo tempo nesta missa.`,
+                        );
+                        if (cellTd) cellTd.classList.add("error-cell");
+                    }
+                    vistosNestaMissa.add(nome);
+                    if (!info) return;
+
+                    let testeFuncao = testarCompatibilidadeFuncao(
+                        info,
+                        funcao,
+                        funcaoPadrao,
+                    );
+                    if (!testeFuncao.pode) {
+                        erros.push(
+                            `<b>${linha.Data} (${funcao})</b>: ${nome} incompatível com a função.`,
+                        );
+                        if (cellTd) cellTd.classList.add("error-cell");
+                    }
+                    if (!verificarDisponibilidade(info, missa.data, missa.csvId)) {
+                        erros.push(
+                            `<b>${linha.Data}</b>: ${nome} não tem disponibilidade para '${missa.csvId || "esta data"}'.`,
+                        );
+                        if (cellTd) cellTd.classList.add("error-cell");
+                    }
+                    if (!allowDay && diaTracker[nome].has(dayId)) {
+                        erros.push(
+                            `<b>${linha.Data}</b>: ${nome} já alocado em outra missa no mesmo dia.`,
+                        );
+                        if (cellTd) cellTd.classList.add("error-cell");
+                    }
+                    if (!allowWeekend && isWeekend && fdsTracker[nome].has(weekendId)) {
+                        erros.push(
+                            `<b>${linha.Data}</b>: ${nome} já alocado em outra missa no mesmo fim de semana.`,
+                        );
+                        if (cellTd) cellTd.classList.add("error-cell");
+                    }
+                });
+
+                escaladosAqui.forEach(({nome}) => {
+                    diaTracker[nome].add(dayId);
+                    if (isWeekend) fdsTracker[nome].add(weekendId);
+                });
+            });
+
+            const reportDiv = document.getElementById("validationReport");
+            let htmlReport = "";
+
+            if (erros.length === 0 && avisos.length === 0) {
+                htmlReport = `
+                    <div class="alert alert-success" id="alert-sucesso">
+                        <i data-lucide="check-circle" style="width:20px;height:20px;flex-shrink:0;"></i>
+                        <div style="flex: 1;"><b>Tudo certo!</b> Nenhuma violação encontrada e todas as vagas estão preenchidas.</div>
+                        <button class="btn-close-alert" onclick="fecharAlerta('sucesso')">
+                            <i data-lucide="x" style="width:16px;height:16px;"></i>
+                        </button>
+                    </div>`;
+            } else {
+                if (erros.length > 0) {
+                    htmlReport += `
+                        <div class="alert alert-destructive" id="alert-erro">
+                            <i data-lucide="alert-triangle" style="width:20px;height:20px;flex-shrink:0;"></i>
+                            <div style="flex: 1;"><b>Encontrados ${erros.length} erro(s):</b><ul>`;
+                    erros.forEach((e) => (htmlReport += `<li>${e}</li>`));
+                    htmlReport += `</ul></div>
+                            <button class="btn-close-alert" onclick="fecharAlerta('erro')">
+                                <i data-lucide="x" style="width:16px;height:16px;"></i>
+                            </button>
+                        </div>`;
+                }
+                if (avisos.length > 0) {
+                    htmlReport += `
+                        <div class="alert alert-warning" id="alert-aviso">
+                            <i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;"></i>
+                            <div style="flex: 1;"><b>Avisos (${avisos.length}):</b><ul>`;
+                    avisos.forEach((a) => (htmlReport += `<li>${a}</li>`));
+                    htmlReport += `</ul></div>
+                            <button class="btn-close-alert" onclick="fecharAlerta('aviso')">
+                                <i data-lucide="x" style="width:16px;height:16px;"></i>
+                            </button>
+                        </div>`;
+                }
+            }
+
+            reportDiv.innerHTML = htmlReport;
+            reportDiv.style.display = "flex";
+            lucide.createIcons();
+        }
+
+        function baixarCSV() {
+            if (escalaGlobal.length === 0) return;
+            let csvContent = "\uFEFF";
+
+            let cabecalho = ["Data"].concat(funcoesGlobal);
+            csvContent +=
+                `${tituloGlobal}` + ",".repeat(funcoesGlobal.length) + "\n";
+            csvContent += cabecalho.join(",") + "\n";
+
+            escalaGlobal.forEach((row) => {
+                let r = [row.Data];
+                funcoesGlobal.forEach((f, idx) => r.push(row["col_" + idx]));
+                csvContent += r.map((v) => `"${v}"`).join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], {
+                type: "text/csv;charset=utf-8;",
+            });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `${tituloGlobal.replace(/ /g, "_")}.csv`;
+            link.click();
+        }
+    </script>
+</body>
+
+</html>
